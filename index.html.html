@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Good morning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #1a1c1e;
+  --surface: #252729;
+  --surface2: #2c2e31;
+  --surface3: #323437;
+  --border: rgba(255,255,255,0.06);
+  --border-med: rgba(255,255,255,0.12);
+  --text: #edeae3;
+  --text-2: #9a9690;
+  --text-3: #5c5a56;
+  --sage: #7aad8a;
+  --sage-dim: #4a7a58;
+  --sage-bg: rgba(122,173,138,0.12);
+  --blue: #6b9fd4;
+  --blue-bg: rgba(107,159,212,0.12);
+  --blue-dim: #1e4a7a;
+  --jays-blue: #134a8e;
+  --jays-red: #e8002d;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+}
+html, body { height: 100%; }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2rem 2.5rem 3rem;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-columns: 1fr 340px;
+  grid-template-areas:
+    "header header"
+    "weather weather"
+    "main sidebar"
+    "links links";
+  gap: 1rem 1.25rem;
+}
+.header {
+  grid-area: header;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 0.5px solid var(--border);
+  padding-bottom: 1rem;
+}
+.greeting {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.greeting em { font-style: italic; color: var(--sage); }
+.date-line {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+.time-display {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--text-3);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.weather-strip {
+  grid-area: weather;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.weather-now { display: flex; align-items: baseline; gap: 10px; flex-shrink: 0; }
+.weather-temp { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--text); line-height: 1; }
+.weather-meta { display: flex; flex-direction: column; gap: 2px; }
+.weather-cond { font-size: 0.82rem; color: var(--text-2); }
+.weather-loc { font-size: 0.68rem; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+.weather-divider { width: 0.5px; height: 36px; background: var(--border-med); flex-shrink: 0; }
+.forecast-strip { display: flex; gap: 6px; flex: 1; }
+.forecast-day {
+  flex: 1;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 8px 4px;
+  text-align: center;
+  transition: background 0.15s;
+}
+.forecast-day:hover { background: var(--surface3); }
+.f-day { font-size: 0.63rem; color: var(--text-3); font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+.f-temp { font-size: 1rem; font-weight: 500; color: var(--text); margin: 5px 0 3px; }
+.f-rain { font-size: 0.65rem; color: var(--sage); }
+.main-col { grid-area: main; display: flex; flex-direction: column; gap: 1rem; }
+.sidebar { grid-area: sidebar; display: flex; flex-direction: column; gap: 1rem; }
+.links-area { grid-area: links; }
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+}
+.card-label {
+  font-size: 0.63rem;
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-label::before {
+  content: '';
+  display: block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--sage);
+  flex-shrink: 0;
+}
+.task-list { list-style: none; }
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 0.5px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.task-item:last-child { border-bottom: none; }
+.task-item:hover { opacity: 0.85; }
+.task-cb {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-med);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.task-cb.done { background: var(--sage); border-color: var(--sage); }
+.task-cb.done::after {
+  content: '';
+  display: block;
+  width: 5px; height: 3px;
+  border-left: 1.5px solid #1a1c1e;
+  border-bottom: 1.5px solid #1a1c1e;
+  transform: rotate(-45deg) translateY(-1px);
+}
+.task-text { font-size: 0.875rem; color: var(--text); flex: 1; line-height: 1.4; font-weight: 300; }
+.task-text.done { color: var(--text-3); text-decoration: line-through; }
+.task-del {
+  font-size: 0.7rem; color: var(--text-3);
+  background: none; border: none; cursor: pointer;
+  padding: 3px 5px; border-radius: 4px;
+  opacity: 0; transition: opacity 0.1s;
+  font-family: 'Instrument Sans', sans-serif;
+}
+.task-item:hover .task-del { opacity: 1; }
+.add-row { display: flex; gap: 8px; margin-top: 12px; }
+.add-row input {
+  flex: 1;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 300;
+  border: 0.5px solid var(--border-med);
+  border-radius: var(--radius-xs);
+  padding: 7px 11px;
+  background: var(--surface2); color: var(--text);
+  outline: none; transition: border-color 0.15s;
+}
+.add-row input:focus { border-color: var(--sage-dim); }
+.add-row input::placeholder { color: var(--text-3); }
+.add-btn {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 500;
+  padding: 7px 14px;
+  border: 0.5px solid var(--border-med);
+  border-radius: var(--radius-xs);
+  background: var(--surface2); color: var(--text-2);
+  cursor: pointer; transition: all 0.15s;
+}
+.add-btn:hover { background: var(--sage-bg); border-color: var(--sage-dim); color: var(--sage); }
+.task-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 10px;
+  font-size: 0.68rem; color: var(--text-3);
+}
+.clear-btn {
+  font-size: 0.68rem; color: var(--text-3);
+  background: none; border: none; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 2px;
+  font-family: 'Instrument Sans', sans-serif;
+}
+.clear-btn:hover { color: var(--text-2); }
+
+/* JAYS */
+.jays-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.jays-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.jays-title {
+  font-size: 0.63rem;
+  font-weight: 500;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.jays-title::before {
+  content: '';
+  display: block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #6b9fd4;
+  flex-shrink: 0;
+}
+.jays-record {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.jays-standing {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  margin-top: 1px;
+  text-align: right;
+}
+.jays-game {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.jays-game:last-child { border-bottom: none; }
+.game-teams { font-size: 0.82rem; color: var(--text); font-weight: 400; }
+.game-opp { color: var(--text-2); font-size: 0.75rem; margin-top: 2px; }
+.game-result {
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+}
+.result-w { background: var(--sage-bg); color: var(--sage); }
+.result-l { background: rgba(200,80,80,0.1); color: #d47a7a; }
+.result-upcoming { background: var(--blue-bg); color: var(--blue); font-weight: 400; font-size: 0.72rem; }
+.jays-scores { display: flex; align-items: baseline; gap: 4px; }
+.score-big { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--text); }
+.score-opp { font-size: 0.8rem; color: var(--text-3); }
+
+/* QUOTE */
+.quote-card {
+  background: var(--sage-bg);
+  border: 0.5px solid rgba(122,173,138,0.2);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.quote-text {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--sage);
+  line-height: 1.65;
+}
+
+/* LINKS */
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 10px;
+}
+.link-btn {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 8px 12px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+.link-btn:hover {
+  background: var(--surface2);
+  border-color: var(--border-med);
+  color: var(--text);
+  transform: translateY(-2px);
+}
+.link-icon {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.header { animation: fadeUp 0.4s ease both; }
+.weather-strip { animation: fadeUp 0.4s 0.05s ease both; }
+.main-col { animation: fadeUp 0.4s 0.1s ease both; }
+.sidebar { animation: fadeUp 0.4s 0.12s ease both; }
+.links-area { animation: fadeUp 0.4s 0.16s ease both; }
+@media (max-width: 900px) {
+  body { grid-template-columns: 1fr; grid-template-areas: "header" "weather" "main" "sidebar" "links"; padding: 1.25rem; }
+  .links-grid { grid-template-columns: repeat(4, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="greeting" id="greeting">Good morning, <em>Elijah</em></div>
+    <div class="date-line" id="datestr"></div>
+  </div>
+  <div class="time-display" id="clock"></div>
+</header>
+
+<div class="weather-strip">
+  <div class="weather-now">
+    <div class="weather-temp" id="w-temp">—</div>
+    <div class="weather-meta">
+      <div class="weather-cond" id="w-cond">Loading…</div>
+      <div class="weather-loc">Victoria, BC</div>
+    </div>
+  </div>
+  <div class="weather-divider"></div>
+  <div class="forecast-strip" id="forecast">
+    <div class="forecast-day"><div class="f-day">—</div><div class="f-temp">—</div><div class="f-rain">—</div></div>
+    <div class="forecast-day"><div class="f-day">—</div><div class="f-temp">—</div><div class="f-rain">—</div></div>
+    <div class="forecast-day"><div class="f-day">—</div><div class="f-temp">—</div><div class="f-rain">—</div></div>
+    <div class="forecast-day"><div class="f-day">—</div><div class="f-temp">—</div><div class="f-rain">—</div></div>
+    <div class="forecast-day"><div class="f-day">—</div><div class="f-temp">—</div><div class="f-rain">—</div></div>
+  </div>
+</div>
+
+<div class="main-col">
+  <div class="card">
+    <div class="card-label">Today's priorities</div>
+    <ul class="task-list" id="tasklist"></ul>
+    <div class="add-row">
+      <input type="text" id="taskInput" placeholder="Add a priority…" />
+      <button class="add-btn" onclick="addTask()">Add</button>
+    </div>
+    <div class="task-footer">
+      <span id="task-count"></span>
+      <button class="clear-btn" onclick="clearDone()">Clear completed</button>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="jays-card">
+    <div class="jays-header">
+      <div class="jays-title">Blue Jays</div>
+      <div style="text-align:right;">
+        <div class="jays-record" id="jays-record">32–34</div>
+        <div class="jays-standing" id="jays-standing">3rd AL East · 5 GB</div>
+      </div>
+    </div>
+    <div id="jays-games"></div>
+  </div>
+  <div class="quote-card">
+    <div class="quote-text" id="quote"></div>
+  </div>
+</div>
+
+<div class="links-area">
+  <div class="links-grid">
+    <a class="link-btn" href="https://outlook.office.com/calendar" target="_blank">
+      <div class="link-icon" style="background:#1a3a5c;">📅</div>Calendar
+    </a>
+    <a class="link-btn" href="https://claude.ai" target="_blank">
+      <div class="link-icon" style="background:#2a2040;">✦</div>Claude
+    </a>
+    <a class="link-btn" href="https://www60.pointclickcare.com/home/login.jsp?ESOLerr=timeout&ESOLGuid=40_1780944859762" target="_blank">
+      <div class="link-icon" style="background:#1a3a2a;">🏥</div>PointClickCare
+    </a>
+    <a class="link-btn" href="https://www21.bmo.com/uiauth/AuthWeb/index.html?TAM_OP=login&ERROR_CODE=0x00000000&URL=%2F&HOSTNAME=www21.bmo.com&AUTHNLEVEL=4&PROTOCOL=https&v=265152026051222#/login/" target="_blank">
+      <div class="link-icon" style="background:#1a2a40;">🏦</div>BMO
+    </a>
+    <a class="link-btn" href="https://www.canva.com" target="_blank">
+      <div class="link-icon" style="background:#3a1a20;">🎨</div>Canva
+    </a>
+    <a class="link-btn" href="https://app.boldsign.com" target="_blank">
+      <div class="link-icon" style="background:#3a2a10;">✍️</div>BoldSign
+    </a>
+    <a class="link-btn" href="https://wordpress.com/home" target="_blank">
+      <div class="link-icon" style="background:#1a2a3a;">🌐</div>WordPress
+    </a>
+    <a class="link-btn" href="https://replicate.com/account" target="_blank">
+      <div class="link-icon" style="background:#2a1a3a;">⚡</div>Replicate
+    </a>
+    <a class="link-btn" href="https://github.com" target="_blank">
+      <div class="link-icon" style="background:#1e1e1e;">🐙</div>GitHub
+    </a>
+  </div>
+</div>
+
+<script>
+const quotes = [
+  "The work matters. So does the person doing it.",
+  "Progress, even small, is still movement forward.",
+  "You bring more than you know to every room you enter.",
+  "Today's effort is tomorrow's foundation.",
+  "Clarity comes from action, not thought alone.",
+  "Rest is part of the work, not separate from it.",
+  "Your presence changes things for the better.",
+  "One thing at a time. You have what it takes."
+];
+
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function updateClock() {
+  const n = new Date();
+  document.getElementById("clock").textContent = pad(n.getHours()) + ":" + pad(n.getMinutes());
+}
+
+function setGreeting() {
+  const h = new Date().getHours();
+  const g = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+  document.getElementById("greeting").innerHTML = g + ", <em>Elijah</em>";
+}
+
+function setDate() {
+  document.getElementById("datestr").textContent = new Date().toLocaleDateString("en-CA", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric"
+  }).toUpperCase();
+}
+
+function setQuote() {
+  document.getElementById("quote").textContent = quotes[new Date().getDay() % quotes.length];
+}
+
+function wDesc(code) {
+  if (code === 0) return "Clear sky";
+  if (code <= 3) return "Partly cloudy";
+  if (code <= 48) return "Fog";
+  if (code <= 57) return "Drizzle";
+  if (code <= 67) return "Rain";
+  if (code <= 77) return "Snow";
+  if (code <= 82) return "Showers";
+  return "Stormy";
+}
+
+function loadWeather() {
+  fetch("https://api.open-meteo.com/v1/forecast?latitude=48.4284&longitude=-123.3656&current=temperature_2m,weathercode&daily=temperature_2m_max,weathercode,precipitation_probability_max&temperature_unit=celsius&forecast_days=5&timezone=America/Vancouver")
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById("w-temp").textContent = Math.round(d.current.temperature_2m) + "°C";
+      document.getElementById("w-cond").textContent = wDesc(d.current.weathercode);
+      const days = d.daily;
+      const strips = document.querySelectorAll(".forecast-day");
+      const dn = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+      days.time.forEach((ds, i) => {
+        if (i >= strips.length) return;
+        const day = new Date(ds + "T12:00:00");
+        strips[i].querySelector(".f-day").textContent = dn[day.getDay()];
+        strips[i].querySelector(".f-temp").textContent = Math.round(days.temperature_2m_max[i]) + "°";
+        strips[i].querySelector(".f-rain").textContent = (days.precipitation_probability_max[i] || 0) + "%";
+      });
+    })
+    .catch(() => { document.getElementById("w-cond").textContent = "Unavailable"; });
+}
+
+function loadJays() {
+  const games = [
+    { status: "closed", home: "TOR", away: "BAL", scoreTOR: 3, scoreOpp: 13, label: "Fri Jun 5" },
+    { status: "closed", home: "TOR", away: "BAL", scoreTOR: 6, scoreOpp: 4,  label: "Sat Jun 6" },
+    { status: "closed", home: "TOR", away: "BAL", scoreTOR: 6, scoreOpp: 4,  label: "Sun Jun 7" },
+    { status: "scheduled", home: "TOR", away: "PHI", label: "Today", time: "4:07 PM PT" },
+    { status: "scheduled", home: "TOR", away: "PHI", label: "Tue Jun 9",  time: "4:07 PM PT" },
+    { status: "scheduled", home: "TOR", away: "PHI", label: "Wed Jun 10", time: "4:07 PM PT" },
+  ];
+
+  const container = document.getElementById("jays-games");
+  container.innerHTML = "";
+
+  games.forEach(g => {
+    const opp = g.away === "TOR" ? g.home : g.away;
+    const homeAway = g.away === "TOR" ? "@ " + g.home : "vs " + g.away;
+    const div = document.createElement("div");
+    div.className = "jays-game";
+
+    let resultHTML = "";
+    if (g.status === "closed") {
+      const win = g.scoreTOR > g.scoreOpp;
+      const cls = win ? "result-w" : "result-l";
+      const letter = win ? "W" : "L";
+      resultHTML = `<div style="text-align:right;">
+        <div class="jays-scores"><span class="score-big">${g.scoreTOR}</span><span class="score-opp">– ${g.scoreOpp}</span></div>
+        <div style="margin-top:2px;"><span class="game-result ${cls}">${letter}</span></div>
+      </div>`;
+    } else {
+      resultHTML = `<span class="game-result result-upcoming">${g.time}</span>`;
+    }
+
+    div.innerHTML = `
+      <div>
+        <div class="game-teams">${g.label}</div>
+        <div class="game-opp">${homeAway}</div>
+      </div>
+      ${resultHTML}
+    `;
+    container.appendChild(div);
+  });
+}
+
+const defaultTasks = [
+  { text: "Check in with Angi on finance update", done: false },
+  { text: "Directors meeting prep", done: false },
+  { text: "Review summer coverage plan", done: false }
+];
+
+let tasks = [];
+
+function loadTasks() {
+  const stored = localStorage.getItem("dash_tasks_v3");
+  const today = new Date().toDateString();
+  if (stored) {
+    const p = JSON.parse(stored);
+    if (p.date === today) { tasks = p.tasks; return; }
+  }
+  tasks = defaultTasks.map(t => ({...t}));
+}
+
+function saveTasks() {
+  localStorage.setItem("dash_tasks_v3", JSON.stringify({ date: new Date().toDateString(), tasks }));
+}
+
+function renderTasks() {
+  const ul = document.getElementById("tasklist");
+  ul.innerHTML = "";
+  tasks.forEach((t, i) => {
+    const li = document.createElement("li");
+    li.className = "task-item";
+    li.innerHTML = `<div class="task-cb ${t.done ? 'done' : ''}"></div><span class="task-text ${t.done ? 'done' : ''}">${t.text}</span><button class="task-del">✕</button>`;
+    li.querySelector(".task-cb").onclick = () => { tasks[i].done = !tasks[i].done; saveTasks(); renderTasks(); };
+    li.querySelector(".task-del").onclick = e => { e.stopPropagation(); tasks.splice(i,1); saveTasks(); renderTasks(); };
+    ul.appendChild(li);
+  });
+  const done = tasks.filter(t => t.done).length;
+  document.getElementById("task-count").textContent = done + " of " + tasks.length + " done";
+}
+
+function addTask() {
+  const inp = document.getElementById("taskInput");
+  const v = inp.value.trim();
+  if (!v) return;
+  tasks.push({ text: v, done: false });
+  saveTasks(); renderTasks();
+  inp.value = ""; inp.focus();
+}
+
+function clearDone() { tasks = tasks.filter(t => !t.done); saveTasks(); renderTasks(); }
+
+document.getElementById("taskInput").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
+
+updateClock();
+setInterval(updateClock, 10000);
+setGreeting();
+setDate();
+setQuote();
+loadTasks();
+renderTasks();
+loadWeather();
+loadJays();
+</script>
+</body>
+</html>
